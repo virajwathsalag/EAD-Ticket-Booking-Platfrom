@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/styles.css">
+  <title>Update Ticket</title>
+</head>
+<body>
+  <h1>Update Ticket</h1>
+  <form id="update-ticket-form">
+    <label for="ticketId">Ticket ID:</label>
+    <input type="text" id="ticketId" name="ticketId" required>
+    <br>
+    <label for="passengerName">New Passenger Name:</label>
+    <input type="text" id="passengerName" name="passengerName" required>
+    <br>
+    <label for="travelDate">New Travel Date:</label>
+    <input type="date" id="travelDate" name="travelDate" required>
+    <br>
+    <button type="submit">Update Ticket</button>
+  </form>
+  <div id="update-status"></div>
+  <script src="js/api.js"></script>
+  <script>
+    document.getElementById('update-ticket-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const ticketId = document.getElementById('ticketId').value;
+      const passengerName = document.getElementById('passengerName').value;
+      const travelDate = document.getElementById('travelDate').value;
+      const statusDiv = document.getElementById('update-status');
+
+      const ticketData = {
+        passengerName,
+        travelDate,
+      };
+
+      try {
+        await updateTicket(ticketId, ticketData);
+        statusDiv.textContent = `Ticket ID ${ticketId} has been successfully updated.`;
+        statusDiv.style.color = 'green';
+      } catch (error) {
+        statusDiv.textContent = `Failed to update ticket: ${error.message}`;
+        statusDiv.style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>

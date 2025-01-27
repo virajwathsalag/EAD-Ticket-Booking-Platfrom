@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayPal Payment Gateway Testing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: #fff;
+        }
+        h1 {
+            text-align: center;
+            color: #444;
+        }
+        button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 4px;
+            background-color: #0070ba;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #005ea6;
+        }
+        .link {
+            display: inline-block;
+            margin: 10px 0;
+            text-decoration: none;
+            color: #0070ba;
+        }
+        .link:hover {
+            text-decoration: underline;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #e9f7f3;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PayPal Payment Gateway Testing</h1>
+
+        <!-- Start Payment -->
+        <form action="http://localhost:8092/api/payments/create" method="post">
+            <button type="submit">Start Payment</button>
+        </form>
+
+        <!-- Links to Test Cancel and Error -->
+        <a href="http://localhost:8092/paypal/cancel" class="link">Simulate Cancel</a><br>
+        <a href="http://localhost:8092/paypal/error" class="link">Simulate Error</a>
+
+        <!-- Simulate Success -->
+        <div>
+            <h2>Simulate Success</h2>
+            <form id="successForm" action="http://localhost:8092/paypal/success" method="get">
+                <label for="paymentId">Payment ID:</label><br>
+                <input type="text" id="paymentId" name="paymentId" required><br><br>
+                <label for="payerId">Payer ID:</label><br>
+                <input type="text" id="payerId" name="payerId" required><br><br>
+                <button type="submit">Simulate Success</button>
+            </form>
+            
+            
+        </div>
+
+        <!-- Display Results -->
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        // Handle success form submission
+        const form = document.getElementById('successForm');
+        const resultDiv = document.getElementById('result');
+    
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent default form submission
+            const formData = new FormData(form);
+    
+            // Extract required query parameters: paymentId and PayerID
+            const paymentId = formData.get('paymentId');
+            const PayerID = formData.get('PayerID');
+    
+            // Validate required parameters
+            if (!paymentId || !PayerID) {
+                resultDiv.innerHTML = `<pre>Please provide both paymentId and PayerID.</pre>`;
+                resultDiv.style.display = 'block';
+                return;
+            }
+    
+            try {
+                // Send GET request to the success endpoint with query parameters
+                const response = await fetch(`http://localhost:8092/api/payments/success?paymentId=${encodeURIComponent(paymentId)}&PayerID=${encodeURIComponent(PayerID)}`);
+    
+                if (response.ok) {
+                    const text = await response.text();
+                    resultDiv.innerHTML = `<pre>${text}</pre>`;
+                    resultDiv.style.display = 'block';
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `<pre>Error: ${errorText}</pre>`;
+                    resultDiv.style.display = 'block';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<pre>An unexpected error occurred: ${error.message}</pre>`;
+                resultDiv.style.display = 'block';
+            }
+        });
+    </script>
+    
+</body>
+</html>

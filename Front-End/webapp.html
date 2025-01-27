@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 10px;
+            background: #eaf6ea;
+            border: 1px solid #c3e6c3;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Train Management System</h1>
+
+        <!-- Create Train Form -->
+        <form id="createForm">
+            <h3>Create Train</h3>
+            <label for="trainNumber">Train Number:</label>
+            <input type="text" id="trainNumber" required>
+
+            <label for="route">Route:</label>
+            <input type="text" id="route" required>
+
+            <label for="schedule">Schedule:</label>
+            <input type="text" id="schedule" required>
+
+            <button type="button" onclick="createTrain()">Create Train</button>
+        </form>
+
+        <!-- Read Train Form -->
+        <form id="readForm">
+            <h3>Retrieve Train</h3>
+            <label for="trainId">Train ID:</label>
+            <input type="text" id="trainId" required>
+
+            <button type="button" onclick="readTrain()">Retrieve Train</button>
+        </form>
+
+        <!-- Update Train Form -->
+        <form id="updateForm">
+            <h3>Update Train</h3>
+
+            <label for="trainSelect">Select Train:</label>
+            <select id="trainSelect" required>
+                <option value="">Select a Train</option> <!-- Placeholder option -->
+            </select>
+
+            <label for="updateSchedule">New Schedule:</label>
+            <input type="text" id="updateSchedule">
+
+            <label for="updateRoute">New Route:</label>
+            <input type="text" id="updateRoute">
+
+            <button type="button" onclick="updateTrain()">Update Train</button>
+        </form>
+
+        <!-- Delete Train Form -->
+        <form id="deleteForm">
+            <h3>Delete Train</h3>
+            <label for="deleteTrainId">Train ID:</label>
+            <input type="text" id="deleteTrainId" required>
+
+            <button type="button" onclick="deleteTrain()">Delete Train</button>
+        </form>
+
+        <div class="output" id="output"></div>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:8090/api/trains"; // Update with your backend endpoint
+
+        // Function to display the output in the HTML div
+        function showOutput(message) {
+            const outputDiv = document.getElementById("output");
+            outputDiv.textContent = message;
+        }
+
+        // Function to create a new train
+        function createTrain() {
+            const trainNumber = document.getElementById("trainNumber").value;
+            const route = document.getElementById("route").value;
+            const schedule = document.getElementById("schedule").value;
+
+            fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ trainNumber, route, schedule })
+            })
+                .then(response => response.json())
+                .then(data => showOutput("Train created: " + JSON.stringify(data)))
+                .catch(err => showOutput("Error: " + err));
+        }
+
+        // Function to read train details
+        function readTrain() {
+            const trainId = document.getElementById("trainId").value;
+            console.log("Requesting train details for ID:", trainId); // Debugging line
+
+            fetch(`${API_URL}/${trainId}`)
+                .then(response => {
+                    console.log("API Response:", response); // Log the response
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Train data received:", data); // Log the actual data
+                    showOutput("Train details: " + JSON.stringify(data));
+                })
+                .catch(err => {
+                    console.error("Error:", err); // Log errors
+                    showOutput("Error: " + err);
+                });
+        }
+
+        // Function to update train details
+        function updateTrain() {
+            const trainNumber = document.getElementById("trainSelect").value; // Get selected train Number
+            const newSchedule = document.getElementById("updateSchedule").value;
+            const newRoute = document.getElementById("updateRoute").value;
+
+            if (!trainNumber) {
+                alert('Please select a train to update.');
+                return;
+            }
+
+            // Ensure you are passing only the train number
+            const trainNumberValue = trainNumber.trim();  // Ensure it's a clean number string
+
+            // Update train details through PUT request
+            fetch(`${API_URL}/number/${trainNumberValue}`, {  // Use extracted trainNumber in URL
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    schedule: newSchedule,
+                    route: newRoute
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        alert("Train updated successfully!");
+                        console.log("Updated Train:", data);
+                    } else {
+                        alert("Failed to update train.");
+                    }
+                })
+                .catch(err => {
+                    alert("Error: " + err);
+                    console.error('Error updating train:', err);
+                });
+        }
+
+        // Function to delete a train
+        function deleteTrain() {
+            const trainId = document.getElementById("deleteTrainId").value;
+
+            fetch(`${API_URL}/${trainId}`, {
+                method: "DELETE"
+            })
+                .then(() => showOutput("Train deleted successfully."))
+                .catch(err => showOutput("Error: " + err));
+        }
+
+        // Function to populate the train select dropdown
+        function populateTrainSelect() {
+            fetch(API_URL)
+                .then(response => response.json())
+                .then(trains => {
+                    const trainSelect = document.getElementById("trainSelect");
+                    trainSelect.innerHTML = '<option value="">Select a Train</option>'; // Clear previous options
+
+                    trains.forEach(train => {
+                        const option = document.createElement('option');
+                        option.value = train.id; // Use train ID as value
+                        option.textContent = `Train Number: ${train.trainNumber}`; // Display train number
+                        trainSelect.appendChild(option);
+                    });
+                })
+                .catch(err => console.error('Error fetching trains:', err));
+        }
+
+        // Populate train select dropdown when the page loads
+        document.addEventListener("DOMContentLoaded", populateTrainSelect);
+
+    </script>
+</body>
+</html>

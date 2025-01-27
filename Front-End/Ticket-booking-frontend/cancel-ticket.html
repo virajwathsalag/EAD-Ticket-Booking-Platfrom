@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/styles.css">
+  <title>Cancel Ticket</title>
+</head>
+<body>
+  <h1>Cancel Ticket</h1>
+  <form id="cancel-ticket-form">
+    <label for="ticketId">Enter Ticket ID:</label>
+    <input type="text" id="ticketId" name="ticketId" required>
+    <button type="submit">Cancel Ticket</button>
+  </form>
+  <div id="cancel-status"></div>
+  <script src="js/api.js"></script>
+  <script>
+    document.getElementById('cancel-ticket-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const ticketId = document.getElementById('ticketId').value;
+      const statusDiv = document.getElementById('cancel-status');
+
+      try {
+        await cancelTicket(ticketId);
+        statusDiv.textContent = `Ticket ID ${ticketId} has been successfully canceled.`;
+        statusDiv.style.color = 'green';
+      } catch (error) {
+        statusDiv.textContent = `Failed to cancel ticket: ${error.message}`;
+        statusDiv.style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>

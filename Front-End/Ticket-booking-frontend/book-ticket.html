@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/styles.css">
+  <title>Book a Ticket</title>
+</head>
+<body>
+  <h1>Book a Ticket</h1>
+  <form id="book-ticket-form">
+    <label for="passengerName">Passenger Name:</label>
+    <input type="text" id="passengerName" name="passengerName" required>
+    <br>
+    <label for="trainId">Train ID:</label>
+    <select id="trainId" name="trainId" required>
+      <!-- Train options will be populated here -->
+    </select>
+    <br>
+    <label for="travelDate">Travel Date:</label>
+    <input type="date" id="travelDate" name="travelDate" required>
+    <br>
+    <label for="userEmail">Email:</label>
+    <input type="email" id="userEmail" name="userEmail" required>
+    <br>
+    <button type="submit">Book Ticket</button>
+  </form>
+
+  <h2>Payment</h2>
+  <form id="payment-form">
+    <label for="amount">Amount (USD):</label>
+    <input type="number" id="amount" name="amount" required step="0.01" min="0.01">
+    <br>
+    <label for="currency">Currency:</label>
+    <select id="currency" name="currency" required>
+      <option value="USD">USD</option>
+      <option value="EUR">EUR</option>
+      <option value="GBP">GBP</option>
+    </select>
+    <br>
+    <button type="submit">Pay Now</button>
+  </form>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const trainSelect = document.getElementById('trainId');
+        const trains = await getAvailableTrains();
+
+        if (trains.length === 0) {
+          alert('No available trains at the moment.');
+          return;
+        }
+
+        // Populate the train dropdown
+        trains.forEach(train => {
+          const option = document.createElement('option');
+          option.value = train.id; // Set train ID as the option value
+          option.textContent = `${train.name} (${train.id})`; // Display train name and ID
+          trainSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error fetching available trains:', error.message);
+        alert('Error fetching available trains. Please try again later.');
+      }
+    });
+
+    document.getElementById('book-ticket-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+      const ticket = {
+        passengerName: formData.get('passengerName'),
+        trainId: formData.get('trainId'),
+        travelDate: formData.get('travelDate'),
+        userEmail: formData.get('userEmail'),
+      };
+
+      try {
+        // Book the ticket
+        const response = await fetch('http://localhost:8091/api/tickets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(ticket),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to book ticket');
+        }
+
+        const ticketDetails = await response.json();
+        alert('Ticket booked successfully!');
+        event.target.reset(); // Clear the form
+
+        // Pre-fill the payment form with ticket details
+        document.getElementById('amount').value = 50; // Replace with dynamic ticket price
+        document.getElementById('currency').value = 'USD'; // Default currency
+      } catch (error) {
+        console.error('Error booking ticket:', error.message);
+        alert('Error booking ticket. Please try again later.');
+      }
+    });
+
+    document.getElementById('payment-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const amount = parseFloat(document.getElementById('amount').value);
+      const currency = document.getElementById('currency').value;
+
+      // Validate amount (should be a positive number)
+      if (isNaN(amount) || amount <= 0) {
+        alert('Please enter a valid amount.');
+        return;
+      }
+
+      // Validate currency (should be a valid currency code)
+      const validCurrencies = ['USD', 'EUR', 'GBP']; // Example list of supported currencies
+      if (!validCurrencies.includes(currency)) {
+        alert('Please select a valid currency.');
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:8092/api/payments/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            amount: amount.toFixed(2), // Ensure amount is in the correct format
+            currency: currency,
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Payment created:', data);
+          if (data.approval_url) {
+            window.location.href = data.approval_url; // Redirect to approval page
+          }
+        } else {
+          const error = await response.json();
+          console.error('Error response:', error);
+          alert('Payment creation failed: ' + error.message);
+        }
+      } catch (err) {
+        console.error('Request error:', err);
+        alert('An unexpected error occurred.');
+      }
+    });
+
+    async function getAvailableTrains() {
+      const response = await fetch('http://localhost:8090/api/trains');
+      if (!response.ok) {
+        throw new Error('Failed to fetch trains');
+      }
+      return await response.json();
+    }
+  </script>
+</body>
+</html>
