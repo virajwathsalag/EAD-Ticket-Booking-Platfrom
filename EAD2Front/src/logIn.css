@@ -1,0 +1,228 @@
+.login-container {
+    min-height: calc(100vh - 60px);
+    margin-top: 60px;
+  }
+  
+  .split-layout {
+    display: flex;
+    height: calc(100vh - 60px);
+  }
+  
+  .image-side {
+    flex: 1;
+    background-image: url("https://images.pexels.com/photos/2414442/pexels-photo-2414442.jpeg");
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+  }
+  
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(26, 31, 113, 0.8), rgba(0, 147, 233, 0.8));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+  }
+  
+  .train-icon {
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .overlay h1 {
+    font-size: 42px;
+    margin-bottom: 16px;
+    font-weight: 700;
+  }
+  
+  .overlay p {
+    font-size: 18px;
+    opacity: 0.9;
+  }
+  
+  .form-side {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    padding: 40px;
+  }
+  
+  .login-card {
+    width: 100%;
+    max-width: 450px;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  .login-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  
+  .login-header h2 {
+    font-size: 32px;
+    color: #1a1f71;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  
+  .login-header p {
+    color: #666;
+    font-size: 16px;
+  }
+  
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #1a1f71;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5ee;
+    border-radius: 12px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+  }
+  
+  .form-group input:focus {
+    outline: none;
+    border-color: #1a1f71;
+    box-shadow: 0 0 0 4px rgba(26, 31, 113, 0.1);
+  }
+  
+  .form-group input::placeholder {
+    color: #aab;
+  }
+  
+  .form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+  }
+  
+  .remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+    cursor: pointer;
+  }
+  
+  .forgot-password {
+    color: #1a1f71;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  .forgot-password:hover {
+    color: #0093e9;
+  }
+  
+  .login-button {
+    padding: 16px;
+    background: linear-gradient(45deg, #1a1f71, #0093e9);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .login-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(26, 31, 113, 0.2);
+  }
+  
+  .login-footer {
+    text-align: center;
+    margin-top: 24px;
+    color: #666;
+    font-size: 14px;
+  }
+  
+  .login-footer a {
+    color: #1a1f71;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+  
+  .login-footer a:hover {
+    color: #0093e9;
+  }
+  
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .split-layout {
+      flex-direction: column;
+      height: auto;
+    }
+  
+    .image-side {
+      height: 300px;
+    }
+  
+    .overlay h1 {
+      font-size: 32px;
+    }
+  
+    .overlay p {
+      font-size: 16px;
+    }
+  
+    .form-side {
+      padding: 20px;
+    }
+  
+    .login-card {
+      padding: 30px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .form-options {
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-start;
+    }
+  }
+  
+  

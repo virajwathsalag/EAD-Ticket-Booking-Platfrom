@@ -1,0 +1,105 @@
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+/* Header styles */
+.logo {
+  color: #2563eb;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.nav-link {
+  color: #4b5563;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #2563eb;
+}
+
+/* Hero section styles */
+.hero {
+  height: 100px;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+  url("MainImg.jpg");
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 2rem;
+}
+
+.hero-content {
+  padding-top: 80px; /* Account for fixed header */
+}
+
+/* Destination card styles */
+.destination-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.destination-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.destination-img {
+  height: 250px;
+  object-fit: cover;
+}
+
+.price-tag {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background-color: #f59e0b;
+  color: white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Story section styles */
+.bg-light {
+  background-color: #f8fafc !important;
+}
+
+/* Button styles */
+.btn-primary {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  padding: 12px 24px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+  .hero {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .hero-content {
+    padding: 120px 0;
+    text-align: center;
+  }
+
+  .btn {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .destination-img {
+    height: 200px;
+  }
+}
+
